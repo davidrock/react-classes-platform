@@ -11,37 +11,49 @@ interface ScheduleItem {
 }
 
 routes.post("/classes", async (req, res) => {
-  const { name, avatar, whatsapp, bio, subject, cost, schedule } = req.body;
+  const trx = await db.transaction();
+  try {
+    const { name, avatar, whatsapp, bio, subject, cost, schedule } = req.body;
 
-  const insertedUsersIds = await db("users").insert({
-    name,
-    avatar,
-    whatsapp,
-    bio,
-  });
+    const insertedUsersIds = await trx("users").insert({
+      name,
+      avatar,
+      whatsapp,
+      bio,
+    });
 
-  const user_id = insertedUsersIds[0];
+    const user_id = insertedUsersIds[0];
 
-  const insertedClassesIds = await db("classes").insert({
-    subject,
-    cost,
-    user_id,
-  });
+    const insertedClassesIds = await trx("classes").insert({
+      subject,
+      cost,
+      user_id,
+    });
 
-  const class_id = insertedClassesIds[0];
+    const class_id = insertedClassesIds[0];
 
-  const classSchedule = schedule.map((x: ScheduleItem) => {
-    return {
-      class_id,
-      week_day: x.week_day,
-      from: convertHourToMinutes(x.from),
-      to: convertHourToMinutes(x.to),
-    };
-  });
+    const classSchedule = schedule.map((x: ScheduleItem) => {
+      return {
+        class_id,
+        week_day: x.week_day,
+        from: convertHourToMinutes(x.from),
+        to: convertHourToMinutes(x.to),
+      };
+    });
 
-  await db("class_schedule").insert(classSchedule);
+    await trx("class_schedule").insert(classSchedule);
 
-  return res.send();
+    trx.commit();
+
+    return res.status(201).send();
+    
+  } catch (error) {
+    trx.rollback();
+    console.log(error);
+    return res.status(400).json({
+      msg: "Unexpected error while creating new class",
+    });
+  }
 });
 
 export default routes;
