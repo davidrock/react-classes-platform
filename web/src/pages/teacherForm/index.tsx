@@ -1,14 +1,29 @@
-import React from "react";
-import PageHeader from "../../components/page-header";
+import React, { useState } from "react";
 
-import Input from "../../components/input";
-import warningIcon from "../../assets/images/icons/warning.svg";
-import TextArea from "../../components/text-area";
 import Select from "../../components/select";
+import PageHeader from "../../components/page-header";
+import Input from "../../components/input";
+import TextArea from "../../components/text-area";
+import warningIcon from "../../assets/images/icons/warning.svg";
 
 import "./styles.css";
 
 export default function TeacherForm() {
+  const [scheduleItems, setScheduleItems] = useState([
+    { week_day: 0, from: "", to: "" },
+  ]);
+
+  function addNewScheduleItem() {
+    setScheduleItems([
+      ...scheduleItems,
+      {
+        week_day: 0,
+        from: '',
+        to: '',
+      },
+    ]);
+  }
+
   return (
     <div id="page-teacher-form">
       <PageHeader
@@ -46,26 +61,32 @@ export default function TeacherForm() {
         <fieldset>
           <legend>
             Horários disponíveis
-            <button type="button">+ Novo horário</button>
+            <button type="button" onClick={addNewScheduleItem}>
+              + Novo horário
+            </button>
           </legend>
 
-          <div className="schedule-item">
-            <Select
-              name="subject"
-              label="Dia da semana"
-              options={[
-                { value: "1", label: "Domingo" },
-                { value: "2", label: "Segunda-Feira" },
-                { value: "3", label: "Terça-Feira" },
-                { value: "4", label: "Quarta-Feira" },
-                { value: "5", label: "Quinta-Feira" },
-                { value: "6", label: "Sexta-Feira" },
-                { value: "7", label: "Sábado" },
-              ]}
-            />
-            <Input name="from" label="Das" type="time" />
-            <Input name="to" label="Até" type="time" />
-          </div>
+          {scheduleItems.map((x) => {
+            return (
+              <div key={x.week_day} className="schedule-item">
+                <Select
+                  name="week_day"
+                  label="Dia da semana"
+                  options={[
+                    { value: "1", label: "Domingo" },
+                    { value: "2", label: "Segunda-Feira" },
+                    { value: "3", label: "Terça-Feira" },
+                    { value: "4", label: "Quarta-Feira" },
+                    { value: "5", label: "Quinta-Feira" },
+                    { value: "6", label: "Sexta-Feira" },
+                    { value: "7", label: "Sábado" },
+                  ]}
+                />
+                <Input name="from" label="Das" type="time" />
+                <Input name="to" label="Até" type="time" />
+              </div>
+            );
+          })}
         </fieldset>
 
         <footer>
