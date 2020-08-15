@@ -1,6 +1,7 @@
 import db from "../database/connection";
 import convertHourToMinutes from "../utils/converHourToMinutes";
 import { Request, Response } from "express";
+import { ScheduleItem } from "../interfaces/ScheduleItem";
 
 export default class ClassesController {
   async getAll(req: Request, res: Response) {
@@ -23,11 +24,11 @@ export default class ClassesController {
     const classes = await db("classes")
       .whereExists(function () {
         this.select("class_schedule.*")
-        .from('class_schedule')
+          .from("class_schedule")
           .whereRaw("`class_schedule`.`class_id`= `classes`.`id`")
           .whereRaw("`class_schedule`.`week_day`= ??", [Number(week_day)])
-          .whereRaw('`class_schedule`.`from`<= ??', [timeInMinutes])
-          .whereRaw('`class_schedule`.`to` > ??', [timeInMinutes])
+          .whereRaw("`class_schedule`.`from`<= ??", [timeInMinutes])
+          .whereRaw("`class_schedule`.`to` > ??", [timeInMinutes]);
       })
       .where("classes.subject", "=", subject)
       .join("users", "classes.user_id", "=", "users.id")
@@ -61,7 +62,7 @@ export default class ClassesController {
       const classSchedule = schedule.map((x: ScheduleItem) => {
         return {
           class_id,
-          week_day: x.week_day,
+          week_day: Number(x.week_day),
           from: convertHourToMinutes(x.from),
           to: convertHourToMinutes(x.to),
         };
