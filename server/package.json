@@ -1,7 +1,7 @@
 {
   "name": "proffy-server",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "index.ts",
   "license": "MIT",
   "scripts": {
     "start": "tsnd --transpile-only --ignore-watch node_modules --respawn src/index.ts",

@@ -2,7 +2,7 @@ import express from "express";
 import ClassesController from "./controllers/classesController";
 import ConnectionsController from "./controllers/connectionsController";
 
-const routes = express();
+const routes = express.Router();
 const classesController = new ClassesController();
 const connectionController = new ConnectionsController();
 
