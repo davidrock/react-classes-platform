@@ -35,3 +35,4 @@ packages/
 */dist
 **/.DS_Store
 **/.expo/**
+mobile/.vscode/settings.json
